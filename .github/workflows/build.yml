@@ -18,7 +18,9 @@ jobs:
 
     - name: Generate Xcode Project
       working-directory: ./AuraPlayer
-      run: xcodegen generate
+      run: |
+        xcodegen generate
+        sed -i '' 's/objectVersion = 77;/objectVersion = 63;/g' AuraPlayer.xcodeproj/project.pbxproj
 
     - name: Build Unsigned App
       working-directory: ./AuraPlayer
