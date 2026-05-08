@@ -1,0 +1,48 @@
+name: Build AuraPlayer IPA
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Install XcodeGen
+      run: brew install xcodegen
+
+    - name: Generate Xcode Project
+      working-directory: ./AuraPlayer
+      run: xcodegen generate
+
+    - name: Build Unsigned App
+      working-directory: ./AuraPlayer
+      run: |
+        xcodebuild clean build \
+          -project AuraPlayer.xcodeproj \
+          -scheme AuraPlayer \
+          -configuration Release \
+          -sdk iphoneos \
+          -derivedDataPath build \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGN_IDENTITY=""
+
+    - name: Package IPA
+      working-directory: ./AuraPlayer
+      run: |
+        mkdir -p Payload
+        cp -r build/Build/Products/Release-iphoneos/AuraPlayer.app Payload/
+        zip -qr AuraPlayer.ipa Payload
+
+    - name: Upload IPA Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AuraPlayer-IPA
+        path: ./AuraPlayer/AuraPlayer.ipa
+        retention-days: 7
