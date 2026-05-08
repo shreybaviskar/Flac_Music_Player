@@ -390,7 +390,7 @@ struct LibraryView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 32)
                 .padding(.vertical, 14)
-                .background(.auraPrimary)
+                .background(Color.auraPrimary)
                 .clipShape(Capsule())
             }
         }

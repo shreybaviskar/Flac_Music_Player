@@ -240,7 +240,8 @@ final class AudioSessionManager: ObservableObject {
             let typeValue = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt ?? 0
             let type = AVAudioSession.InterruptionType(rawValue: typeValue)
             
-            Task { @MainActor in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
                 if type == .began {
                     // Interruption began — pause playback.
                     self.onInterruption?(false)
@@ -262,7 +263,7 @@ final class AudioSessionManager: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in
+            Task { @MainActor [weak self] in
                 self?.configureSession()
                 // The AudioEngineManager should also reinitialize.
             }

@@ -290,26 +290,7 @@ final class PlayerViewModel: ObservableObject {
         queueManager.cycleRepeatMode()
     }
     
-    // MARK: - Queue Actions
-    
-    func playNext(track: Track) {
-        queueManager.playNext(track: track)
-    }
-    
-    func playLater(track: Track) {
-        queueManager.playLater(track: track)
-    }
-    
-    func removeFromQueue(at offsets: IndexSet) {
-        for index in offsets {
-            let adjustedIndex = (queueManager.currentIndex + 1) + index
-            queueManager.removeFromQueue(at: adjustedIndex)
-        }
-    }
-    
-    func jumpToQueueTrack(_ track: Track) {
-        queueManager.jumpToTrack(track)
-    }
+
     
     // MARK: - EQ Controls
     
@@ -425,20 +406,20 @@ final class PlayerViewModel: ObservableObject {
         }
         
         // Sample colors from the artwork on a background queue.
-        Task.detached(priority: .userInitiated) { [weak self] in
-            let colors = Self.extractColors(from: cgImage)
+        Task {
+            let colors = await Task.detached(priority: .userInitiated) {
+                return Self.extractColors(from: cgImage)
+            }.value
             
-            await MainActor.run {
-                withAnimation(.easeInOut(duration: 0.8)) {
-                    self?.artworkColors = colors.gradient
-                    self?.primaryArtworkColor = colors.primary
-                }
+            withAnimation(.easeInOut(duration: 0.8)) {
+                self.artworkColors = colors.gradient
+                self.primaryArtworkColor = colors.primary
             }
         }
     }
     
     /// Samples pixels from a CGImage to extract dominant colors.
-    private static func extractColors(from cgImage: CGImage) -> (primary: Color, gradient: [Color]) {
+    nonisolated private static func extractColors(from cgImage: CGImage) -> (primary: Color, gradient: [Color]) {
         let width = 10
         let height = 10
         let colorSpace = CGColorSpaceCreateDeviceRGB()

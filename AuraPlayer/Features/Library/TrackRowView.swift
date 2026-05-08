@@ -113,6 +113,7 @@ struct TrackRowView: View {
 // MARK: - Context Menu
 
 extension TrackRowView {
+    @MainActor
     func withContextMenu(
         playerVM: PlayerViewModel,
         libraryVM: LibraryViewModel

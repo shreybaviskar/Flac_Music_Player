@@ -66,30 +66,3 @@ extension Font {
     static let auraTiny = Font.system(size: 10, weight: .semibold, design: .rounded)
 }
 
-// MARK: - Quality Badge Colors
-
-extension Track {
-    /// Color for the quality badge based on codec and sample rate.
-    var qualityColor: Color {
-        if isHiRes {
-            return .auraWarning
-        } else if isLossless {
-            return .auraSuccess
-        } else {
-            return .gray
-        }
-    }
-    
-    /// Short quality badge text (e.g. "Hi-Res", "Lossless", "MP3").
-    var qualityBadge: String {
-        if sampleRate >= 352800 {
-            return "DSD"
-        } else if isHiRes {
-            return "Hi-Res"
-        } else if isLossless {
-            return "Lossless"
-        } else {
-            return codec.rawValue
-        }
-    }
-}

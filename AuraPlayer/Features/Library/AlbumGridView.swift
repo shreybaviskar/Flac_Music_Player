@@ -193,7 +193,7 @@ struct AlbumDetailView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(.auraPrimary)
+                .background(Color.auraPrimary)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             
