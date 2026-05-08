@@ -1,6 +1,7 @@
 name: AuraPlayer
 options:
   bundleIdPrefix: com.auraplayer
+  xcodeVersion: "15.4"
   deploymentTarget:
     iOS: "17.0"
 targets:
