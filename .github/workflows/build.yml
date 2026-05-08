@@ -18,10 +18,12 @@ jobs:
 
     - name: Generate Xcode Project
       working-directory: ./AuraPlayer
-      run: xcodegen generate
+      continue-on-error: true
+      run: xcodegen generate > ../xcodegen.log 2>&1
 
     - name: Build Unsigned App
       working-directory: ./AuraPlayer
+      continue-on-error: true
       run: |
         xcodebuild clean build \
           -project AuraPlayer.xcodeproj \
@@ -31,18 +33,20 @@ jobs:
           -derivedDataPath build \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \
-          CODE_SIGN_IDENTITY=""
+          CODE_SIGN_IDENTITY="" > ../xcodebuild.log 2>&1
 
     - name: Package IPA
       working-directory: ./AuraPlayer
+      continue-on-error: true
       run: |
         mkdir -p Payload
         cp -r build/Build/Products/Release-iphoneos/AuraPlayer.app Payload/
         zip -qr AuraPlayer.ipa Payload
 
-    - name: Upload IPA Artifact
+    - name: Upload Logs
       uses: actions/upload-artifact@v4
       with:
-        name: AuraPlayer-IPA
-        path: ./AuraPlayer/AuraPlayer.ipa
-        retention-days: 7
+        name: BuildLogs
+        path: |
+          ./xcodegen.log
+          ./xcodebuild.log
