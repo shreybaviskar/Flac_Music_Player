@@ -25,12 +25,12 @@ final class AlbumModelTests: XCTestCase {
             filePath: "/music/\(title).flac",
             fileExtension: "flac",
             title: title,
+            trackNumber: trackNumber,
+            discNumber: discNumber,
             duration: duration,
             sampleRate: sampleRate,
             bitDepth: bitDepth,
-            codec: codec,
-            trackNumber: trackNumber,
-            discNumber: discNumber
+            codec: codec
         )
     }
 

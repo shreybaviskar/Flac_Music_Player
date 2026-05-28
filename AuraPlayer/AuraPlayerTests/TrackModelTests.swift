@@ -28,12 +28,12 @@ final class TrackModelTests: XCTestCase {
             filePath: filePath,
             fileExtension: fileExtension,
             title: title,
+            trackNumber: trackNumber,
+            discNumber: discNumber,
             duration: duration,
             sampleRate: sampleRate,
             bitDepth: bitDepth,
-            codec: codec,
-            trackNumber: trackNumber,
-            discNumber: discNumber
+            codec: codec
         )
     }
 
