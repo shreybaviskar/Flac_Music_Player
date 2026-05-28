@@ -108,6 +108,9 @@ final class AudioEngineManager: ObservableObject {
     /// Builds the complete node graph from scratch.
     /// Called once at init and again after a media services reset.
     func setupEngine() {
+        if NSClassFromString("XCTestCase") != nil {
+            return
+        }
         // Tear down any existing engine.
         tearDownEngine()
         

@@ -63,8 +63,12 @@ struct AuraPlayerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .preferredColorScheme(.dark)
+            if NSClassFromString("XCTestCase") != nil {
+                Text("Running Unit Tests")
+            } else {
+                ContentView()
+                    .preferredColorScheme(.dark)
+            }
         }
         .modelContainer(sharedModelContainer)
     }
@@ -78,6 +82,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+        
+        if NSClassFromString("XCTestCase") != nil {
+            return true
+        }
         
         // Configure the audio session for high-fidelity playback.
         // Must happen before any audio engine operations.

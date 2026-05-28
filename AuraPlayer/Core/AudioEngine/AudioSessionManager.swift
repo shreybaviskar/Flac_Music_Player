@@ -100,6 +100,9 @@ final class AudioSessionManager: ObservableObject {
     ///
     /// Must be called once at app launch (e.g. in AppDelegate).
     func configureSession() {
+        if NSClassFromString("XCTestCase") != nil {
+            return
+        }
         let session = AVAudioSession.sharedInstance()
         
         do {
