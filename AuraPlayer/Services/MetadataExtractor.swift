@@ -389,7 +389,7 @@ final class MetadataExtractor: Sendable {
     
     /// Cleans up ID3 genre strings that use the numeric "(XX)" format.
     /// e.g. "(17)" → "Rock", "(255)Custom" → "Custom"
-    private func cleanID3Genre(from item: AVMetadataItem) async -> String? {
+    func cleanID3Genre(from item: AVMetadataItem) async -> String? {
         guard let raw = await loadStringValue(from: item) else { return nil }
         
         // If the genre is a pure numeric reference like "(17)", map it.
@@ -416,7 +416,7 @@ final class MetadataExtractor: Sendable {
     
     /// Extracts a 4-digit year from various date string formats.
     /// Handles: "2023", "2023-06-15", "2023-06-15T00:00:00Z", etc.
-    private func parseYearFromDateString(_ dateStr: String) -> Int? {
+    func parseYearFromDateString(_ dateStr: String) -> Int? {
         // Try direct 4-digit parse first.
         if dateStr.count == 4, let year = Int(dateStr) {
             return year

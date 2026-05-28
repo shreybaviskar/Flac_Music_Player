@@ -14,6 +14,7 @@ targets:
           - "**/*.md"
           - "project.yml"
           - ".github"
+          - "AuraPlayerTests"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.auraplayer.AuraPlayer
@@ -28,3 +29,20 @@ targets:
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGNING_ALLOWED: NO
         CODE_SIGN_IDENTITY: ""
+
+  AuraPlayerTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: AuraPlayerTests
+    dependencies:
+      - target: AuraPlayer
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.auraplayer.AuraPlayerTests
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGN_IDENTITY: ""
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/AuraPlayer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AuraPlayer"
+        BUNDLE_LOADER: "$(TEST_HOST)"

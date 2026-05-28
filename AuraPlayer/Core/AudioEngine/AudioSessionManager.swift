@@ -239,6 +239,7 @@ final class AudioSessionManager: ObservableObject {
             
             let typeValue = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt ?? 0
             let type = AVAudioSession.InterruptionType(rawValue: typeValue)
+            let optionsValue = notification.userInfo?[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
             
             Task { @MainActor [weak self] in
                 guard let self else { return }
@@ -247,7 +248,6 @@ final class AudioSessionManager: ObservableObject {
                     self.onInterruption?(false)
                 } else if type == .ended {
                     // Interruption ended — check if we should resume.
-                    let optionsValue = notification.userInfo?[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
                     let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
                     let shouldResume = options.contains(.shouldResume)
                     
