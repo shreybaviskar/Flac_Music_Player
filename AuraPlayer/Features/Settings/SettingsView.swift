@@ -253,11 +253,8 @@ struct SettingsView: View {
     }
 
     private var appVersionDisplay: String {
-        let info = Bundle.main.infoDictionary
-        let shortVersion = (info?["CFBundleShortVersionString"] as? String)?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        let buildVersion = (info?["CFBundleVersion"] as? String)?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let shortVersion = versionValue(forKey: "CFBundleShortVersionString")
+        let buildVersion = versionValue(forKey: "CFBundleVersion")
 
         if let shortVersion, !shortVersion.isEmpty, let buildVersion, !buildVersion.isEmpty {
             return "\(shortVersion) (\(buildVersion))"
@@ -268,6 +265,13 @@ struct SettingsView: View {
         if let buildVersion, !buildVersion.isEmpty {
             return buildVersion
         }
-        return "—"
+        return versionUnavailablePlaceholder
     }
+
+    private func versionValue(forKey key: String) -> String? {
+        (Bundle.main.infoDictionary?[key] as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var versionUnavailablePlaceholder: String { "—" }
 }
