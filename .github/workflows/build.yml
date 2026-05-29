@@ -85,8 +85,14 @@ jobs:
     - name: Package IPA
       working-directory: ./AuraPlayer
       run: |
+        APP_PATH="$(find build/Build/Products -type d -path '*/Release-iphoneos/AuraPlayer.app' | head -n 1)"
+        if [ -z "$APP_PATH" ]; then
+          echo "AuraPlayer.app not found under build/Build/Products"
+          exit 1
+        fi
+        rm -rf Payload AuraPlayer.ipa
         mkdir -p Payload
-        cp -r build/Build/Products/Release-iphoneos/AuraPlayer.app Payload/
+        cp -R "$APP_PATH" Payload/
         zip -qr AuraPlayer.ipa Payload
 
     - name: Upload IPA Artifact

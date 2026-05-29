@@ -10,7 +10,6 @@ import XCTest
 import SwiftData
 @testable import AuraPlayer
 
-@MainActor
 final class LibraryViewModelTests: XCTestCase {
     
     private var sut: LibraryViewModel!
@@ -19,6 +18,7 @@ final class LibraryViewModelTests: XCTestCase {
     
     // MARK: - Setup & Teardown
     
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         
@@ -33,6 +33,7 @@ final class LibraryViewModelTests: XCTestCase {
         sut = LibraryViewModel()
     }
     
+    @MainActor
     override func tearDown() async throws {
         sut = nil
         context = nil

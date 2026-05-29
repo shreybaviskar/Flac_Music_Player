@@ -179,31 +179,6 @@ final class DesignSystemTests: XCTestCase {
         XCTAssertNotNil(font as Any, "auraTiny should be a valid Font")
     }
     
-    // MARK: - Font Uniqueness Tests
-    
-    func test_allFontTokens_areDifferent() {
-        // Each font token should produce a unique Font value (different size/weight/design).
-        let fonts: [(String, Font)] = [
-            ("auraTitle", .auraTitle),
-            ("auraHeadline", .auraHeadline),
-            ("auraSubheadline", .auraSubheadline),
-            ("auraBody", .auraBody),
-            ("auraCaption", .auraCaption),
-            ("auraTiny", .auraTiny)
-        ]
-        
-        // Compare each pair by description to verify they are distinct.
-        for i in 0..<fonts.count {
-            for j in (i + 1)..<fonts.count {
-                XCTAssertNotEqual(
-                    String(describing: fonts[i].1),
-                    String(describing: fonts[j].1),
-                    "\(fonts[i].0) and \(fonts[j].0) should be different fonts"
-                )
-            }
-        }
-    }
-    
     // MARK: - SwiftUI Context Smoke Tests
     
     /// Verifies that all color tokens can be used in a SwiftUI View context

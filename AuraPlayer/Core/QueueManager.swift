@@ -119,16 +119,8 @@ final class QueueManager: ObservableObject {
     // MARK: - Init
     
     private init() {
-        setupPlaybackControllerBinding()
-    }
-    
-    /// Connects to PlaybackController's `onTrackFinished` callback.
-    private func setupPlaybackControllerBinding() {
-        PlaybackController.shared.onTrackFinished = { [weak self] in
-            Task { @MainActor in
-                self?.advanceToNext()
-            }
-        }
+        // Avoid touching PlaybackController.shared during singleton initialization.
+        // PlaybackController establishes queue callbacks on its side.
     }
     
     // MARK: - Queue Loading
