@@ -73,6 +73,8 @@ final class PlaybackController: ObservableObject {
     
     /// Connects QueueManager's play callback to this controller.
     private func setupQueueManagerBinding() {
+        // Keep track-finished wiring here so QueueManager initialization does not
+        // have to touch PlaybackController.shared (avoids singleton init recursion).
         onTrackFinished = {
             Task { @MainActor in
                 QueueManager.shared.advanceToNext()
