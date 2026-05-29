@@ -113,6 +113,20 @@ struct SettingsView: View {
     
     private var playbackSection: some View {
         Section {
+            HStack {
+                Label {
+                    Text("Shuffle")
+                } icon: {
+                    Image(systemName: "shuffle")
+                        .foregroundColor(.auraAccent)
+                }
+                Spacer()
+                Toggle("", isOn: shuffleToggleBinding)
+                    .labelsHidden()
+                    .tint(.auraAccent)
+            }
+            .listRowBackground(Color.auraSurface)
+
             // Shuffle Mode picker
             HStack {
                 Label {
@@ -132,7 +146,7 @@ struct SettingsView: View {
                             HStack {
                                 Image(systemName: mode.iconName)
                                 Text(mode.rawValue)
-                                if playerVM.shuffleMode == mode {
+                                if playerVM.isShuffleEnabled && playerVM.shuffleMode == mode {
                                     Image(systemName: "checkmark")
                                 }
                             }
@@ -145,8 +159,9 @@ struct SettingsView: View {
                         Image(systemName: "chevron.up.chevron.down")
                             .font(.system(size: 10))
                     }
-                    .foregroundColor(.auraTextSecondary)
+                    .foregroundColor(playerVM.isShuffleEnabled ? .auraTextSecondary : .auraTextTertiary)
                 }
+                .disabled(!playerVM.isShuffleEnabled)
             }
             .listRowBackground(Color.auraSurface)
         } header: {
@@ -168,7 +183,7 @@ struct SettingsView: View {
                         .foregroundColor(.auraTextTertiary)
                 }
                 Spacer()
-                Text("1.0.0")
+                Text(appVersionDisplay)
                     .font(.auraCaption)
                     .foregroundColor(.auraTextTertiary)
             }
@@ -225,5 +240,33 @@ struct SettingsView: View {
             return String(format: "%.0f kHz", kHz)
         }
         return String(format: "%.1f kHz", kHz)
+    }
+
+    private var shuffleToggleBinding: Binding<Bool> {
+        Binding(
+            get: { playerVM.isShuffleEnabled },
+            set: { newValue in
+                if newValue != playerVM.isShuffleEnabled {
+                    playerVM.toggleShuffle()
+                }
+            }
+        )
+    }
+
+    private var appVersionDisplay: String {
+        let info = Bundle.main.infoDictionary
+        let shortVersion = info?["CFBundleShortVersionString"] as? String
+        let buildVersion = info?["CFBundleVersion"] as? String
+
+        if let shortVersion, let buildVersion, !buildVersion.isEmpty {
+            return "\(shortVersion) (\(buildVersion))"
+        }
+        if let shortVersion {
+            return shortVersion
+        }
+        if let buildVersion, !buildVersion.isEmpty {
+            return buildVersion
+        }
+        return "—"
     }
 }
