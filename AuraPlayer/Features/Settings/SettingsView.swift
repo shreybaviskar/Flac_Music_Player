@@ -245,7 +245,8 @@ struct SettingsView: View {
     private var shuffleToggleBinding: Binding<Bool> {
         Binding(
             get: { playerVM.isShuffleEnabled },
-            set: { _ in
+            set: { newValue in
+                guard newValue != playerVM.isShuffleEnabled else { return }
                 playerVM.toggleShuffle()
             }
         )
@@ -257,16 +258,14 @@ struct SettingsView: View {
             .trimmingCharacters(in: .whitespacesAndNewlines)
         let buildVersion = (info?["CFBundleVersion"] as? String)?
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        let hasShortVersion = !(shortVersion?.isEmpty ?? true)
-        let hasBuildVersion = !(buildVersion?.isEmpty ?? true)
 
-        if hasShortVersion, hasBuildVersion, let shortVersion, let buildVersion {
+        if let shortVersion, !shortVersion.isEmpty, let buildVersion, !buildVersion.isEmpty {
             return "\(shortVersion) (\(buildVersion))"
         }
-        if hasShortVersion, let shortVersion {
+        if let shortVersion, !shortVersion.isEmpty {
             return shortVersion
         }
-        if hasBuildVersion, let buildVersion {
+        if let buildVersion, !buildVersion.isEmpty {
             return buildVersion
         }
         return "—"
