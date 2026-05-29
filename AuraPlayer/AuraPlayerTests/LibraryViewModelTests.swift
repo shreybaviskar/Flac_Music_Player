@@ -64,6 +64,7 @@ final class LibraryViewModelTests: XCTestCase {
     
     // MARK: - Sorting and Predicates
     
+    @MainActor
     func test_trackDescriptor_withSearchText_setsCorrectPredicate() {
         sut.searchText = "Heavy"
         sut.debouncedSearchText = "Heavy" // Manually set to skip Combine debounce latency in tests
@@ -73,6 +74,7 @@ final class LibraryViewModelTests: XCTestCase {
         XCTAssertNotNil(descriptor.predicate)
     }
     
+    @MainActor
     func test_trackDescriptor_sortByTitleAscending() {
         sut.trackSortOption = .title
         sut.sortAscending = true
@@ -81,6 +83,7 @@ final class LibraryViewModelTests: XCTestCase {
         XCTAssertEqual(descriptor.sortBy.count, 1)
     }
     
+    @MainActor
     func test_trackDescriptor_sortByArtistDescending() {
         sut.trackSortOption = .artist
         sut.sortAscending = false
@@ -89,6 +92,7 @@ final class LibraryViewModelTests: XCTestCase {
         XCTAssertEqual(descriptor.sortBy.count, 2)
     }
     
+    @MainActor
     func test_albumDescriptor_withSearchText() {
         sut.searchText = "Acoustic"
         sut.debouncedSearchText = "Acoustic"
@@ -97,6 +101,7 @@ final class LibraryViewModelTests: XCTestCase {
         XCTAssertNotNil(descriptor.predicate)
     }
     
+    @MainActor
     func test_favoritesDescriptor_filtersOnlyFavorites() throws {
         _ = createDummyTrack(title: "Track A", isFavorite: true)
         _ = createDummyTrack(title: "Track B", isFavorite: false)
@@ -111,6 +116,7 @@ final class LibraryViewModelTests: XCTestCase {
     
     // MARK: - Artist Grouping
     
+    @MainActor
     func test_groupTracksByArtist_groupsAndSortsCorrectly() {
         let t1 = Track(filePath: "/1", fileExtension: "flac", title: "Song 1", artistName: "Zola")
         let t2 = Track(filePath: "/2", fileExtension: "flac", title: "Song 2", artistName: "Abba")
@@ -127,6 +133,7 @@ final class LibraryViewModelTests: XCTestCase {
     
     // MARK: - Playlist Operations
     
+    @MainActor
     func test_createPlaylist_insertsAndSaves() throws {
         let track = createDummyTrack(title: "Gold")
         
@@ -142,6 +149,7 @@ final class LibraryViewModelTests: XCTestCase {
         XCTAssertEqual(fetched.first?.name, "Vibe playlist")
     }
     
+    @MainActor
     func test_renamePlaylist_updatesNameAndModifiedDate() {
         let playlist = Playlist(name: "Old Name")
         let oldModifiedDate = playlist.dateModified
@@ -152,6 +160,7 @@ final class LibraryViewModelTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(playlist.dateModified, oldModifiedDate)
     }
     
+    @MainActor
     func test_deletePlaylist_removesFromContext() throws {
         let playlist = Playlist(name: "Delete Me")
         context.insert(playlist)
@@ -166,6 +175,7 @@ final class LibraryViewModelTests: XCTestCase {
     
     // MARK: - Library Stats
     
+    @MainActor
     func test_updateStats_recalculatesTotals() throws {
         let t1 = createDummyTrack(title: "T1", artist: "Artist A")
         let t2 = createDummyTrack(title: "T2", artist: "Artist B")
@@ -188,6 +198,7 @@ final class LibraryViewModelTests: XCTestCase {
     
     // MARK: - EQ Presets Seeding
     
+    @MainActor
     func test_seedEQPresetsIfNeeded_seedsEightPresets() throws {
         sut.seedEQPresetsIfNeeded(modelContext: context)
         
