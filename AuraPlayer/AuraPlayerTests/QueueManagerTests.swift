@@ -14,7 +14,6 @@
 import XCTest
 @testable import AuraPlayer
 
-@MainActor
 final class QueueManagerTests: XCTestCase {
     
     // MARK: - Properties
@@ -66,6 +65,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - setUp / tearDown
     
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         
@@ -88,6 +88,7 @@ final class QueueManagerTests: XCTestCase {
         }
     }
     
+    @MainActor
     override func tearDown() async throws {
         sut.clearQueue()
         sut.onPlayTrack = nil
@@ -98,6 +99,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - loadQueue Tests
     
+    @MainActor
     func test_loadQueue_withTracks_setsQueueAndCurrentTrack() async {
         let tracks = makeTracks(count: 5)
         
@@ -110,6 +112,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(playedTracks.first?.title, "Track 1")
     }
     
+    @MainActor
     func test_loadQueue_withStartIndex_playsCorrectTrack() async {
         let tracks = makeTracks(count: 5)
         
@@ -120,6 +123,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(playedTracks.first?.title, "Track 3")
     }
     
+    @MainActor
     func test_loadQueue_emptyArray_doesNothing() async {
         // Load some initial data
         let tracks = makeTracks(count: 3)
@@ -136,6 +140,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.currentTrack?.id, previousTrack?.id)
     }
     
+    @MainActor
     func test_loadQueue_startIndexBeyondBounds_clampsToLastTrack() async {
         let tracks = makeTracks(count: 3)
         
@@ -146,6 +151,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.currentTrack?.title, "Track 3")
     }
     
+    @MainActor
     func test_loadQueue_negativeStartIndex_clampsToZero() async {
         let tracks = makeTracks(count: 3)
         
@@ -155,6 +161,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.currentTrack?.title, "Track 1")
     }
     
+    @MainActor
     func test_loadQueue_setsHasNextAndHasPrevious() async {
         let tracks = makeTracks(count: 3)
         
@@ -164,6 +171,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertTrue(sut.hasPrevious, "Middle track should have previous")
     }
     
+    @MainActor
     func test_loadQueue_atStart_hasNextButNotPrevious() async {
         let tracks = makeTracks(count: 3)
         sut.repeatMode = .off
@@ -174,6 +182,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertFalse(sut.hasPrevious)
     }
     
+    @MainActor
     func test_loadQueue_atEnd_hasPreviousButNotNext() async {
         let tracks = makeTracks(count: 3)
         sut.repeatMode = .off
@@ -184,6 +193,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertTrue(sut.hasPrevious)
     }
     
+    @MainActor
     func test_loadQueue_singleTrack_noNextNoPrevious() async {
         let tracks = makeTracks(count: 1)
         sut.repeatMode = .off
@@ -196,6 +206,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - appendToQueue Tests
     
+    @MainActor
     func test_appendToQueue_addsTracksToEnd() async {
         let initial = makeTracks(count: 2)
         sut.loadQueue(tracks: initial)
@@ -208,6 +219,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.queue[3].title, "Extra 2")
     }
     
+    @MainActor
     func test_appendToQueue_doesNotChangeCurrentTrack() async {
         let initial = makeTracks(count: 2)
         sut.loadQueue(tracks: initial)
@@ -221,6 +233,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - playNext Tests
     
+    @MainActor
     func test_playNext_insertsAfterCurrentTrack() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks) // currentIndex = 0
@@ -234,6 +247,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.queue[2].title, "Track 2")
     }
     
+    @MainActor
     func test_playNext_whenAtLastIndex_insertsAtEnd() async {
         let tracks = makeTracks(count: 2)
         sut.loadQueue(tracks: tracks, startIndex: 1) // currentIndex = 1
@@ -247,6 +261,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - playLater Tests
     
+    @MainActor
     func test_playLater_appendsToEnd() async {
         let tracks = makeTracks(count: 2)
         sut.loadQueue(tracks: tracks)
@@ -260,6 +275,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - removeFromQueue Tests
     
+    @MainActor
     func test_removeFromQueue_removesTrackAtIndex() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks)
@@ -271,6 +287,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.queue[1].title, "Track 3")
     }
     
+    @MainActor
     func test_removeFromQueue_beforeCurrentIndex_adjustsIndex() async {
         let tracks = makeTracks(count: 4)
         sut.loadQueue(tracks: tracks, startIndex: 2) // playing Track 3
@@ -282,6 +299,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.currentTrack?.title, "Track 3")
     }
     
+    @MainActor
     func test_removeFromQueue_atCurrentIndex_playsNextTrack() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks, startIndex: 1) // playing Track 2
@@ -294,6 +312,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertFalse(playedTracks.isEmpty, "Should trigger playback of next track")
     }
     
+    @MainActor
     func test_removeFromQueue_invalidIndex_doesNothing() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks)
@@ -305,6 +324,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.queue.count, 3)
     }
     
+    @MainActor
     func test_removeFromQueue_lastTrack_callsOnQueueExhausted() async {
         let tracks = makeTracks(count: 1)
         sut.loadQueue(tracks: tracks)
@@ -318,6 +338,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - clearQueue Tests
     
+    @MainActor
     func test_clearQueue_emptiesEverything() async {
         let tracks = makeTracks(count: 5)
         sut.loadQueue(tracks: tracks, startIndex: 2)
@@ -335,6 +356,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - advanceToNext Tests
     
+    @MainActor
     func test_advanceToNext_incrementsIndexAndPlaysNext() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks) // starts at 0
@@ -348,6 +370,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(playedTracks.first?.title, "Track 2")
     }
     
+    @MainActor
     func test_advanceToNext_atEndWithRepeatAll_wrapsToStart() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks, startIndex: 2) // at last track
@@ -360,6 +383,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.currentTrack?.title, "Track 1")
     }
     
+    @MainActor
     func test_advanceToNext_atEndWithRepeatOff_callsOnQueueExhausted() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks, startIndex: 2) // at last track
@@ -371,6 +395,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertTrue(queueExhaustedCalled)
     }
     
+    @MainActor
     func test_advanceToNext_withRepeatOne_replaysCurrentTrack() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks, startIndex: 1) // playing Track 2
@@ -386,6 +411,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(playedTracks.first?.title, "Track 2")
     }
     
+    @MainActor
     func test_advanceToNext_emptyQueue_callsOnQueueExhausted() async {
         queueExhaustedCalled = false
         
@@ -394,6 +420,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertTrue(queueExhaustedCalled)
     }
     
+    @MainActor
     func test_advanceToNext_multipleAdvancements_traversesEntireQueue() async {
         let tracks = makeTracks(count: 4)
         sut.loadQueue(tracks: tracks) // starts at 0
@@ -410,6 +437,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - cycleRepeatMode Tests
     
+    @MainActor
     func test_cycleRepeatMode_offToAllToOneToOff() async {
         sut.repeatMode = .off
         
@@ -423,6 +451,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.repeatMode, .off)
     }
     
+    @MainActor
     func test_cycleRepeatMode_fullCycleReturnsToOriginal() async {
         sut.repeatMode = .off
         
@@ -435,6 +464,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - jumpToIndex Tests
     
+    @MainActor
     func test_jumpToIndex_validIndex_jumpsAndPlays() async {
         let tracks = makeTracks(count: 5)
         sut.loadQueue(tracks: tracks) // starts at 0
@@ -448,6 +478,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(playedTracks.first?.title, "Track 4")
     }
     
+    @MainActor
     func test_jumpToIndex_invalidNegativeIndex_doesNothing() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks) // starts at 0
@@ -459,6 +490,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertTrue(playedTracks.isEmpty)
     }
     
+    @MainActor
     func test_jumpToIndex_indexBeyondBounds_doesNothing() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks) // starts at 0
@@ -472,6 +504,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - jumpToTrack Tests
     
+    @MainActor
     func test_jumpToTrack_existingTrack_jumpsToIt() async {
         let tracks = makeTracks(count: 5)
         sut.loadQueue(tracks: tracks)
@@ -484,6 +517,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.currentTrack?.id, targetTrack.id)
     }
     
+    @MainActor
     func test_jumpToTrack_nonExistentTrack_doesNothing() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks)
@@ -498,6 +532,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - upcomingTracks Tests
     
+    @MainActor
     func test_upcomingTracks_returnsTracksAfterCurrent() async {
         let tracks = makeTracks(count: 5)
         sut.loadQueue(tracks: tracks, startIndex: 1) // playing Track 2
@@ -510,6 +545,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(upcoming[2].title, "Track 5")
     }
     
+    @MainActor
     func test_upcomingTracks_atLastTrack_returnsEmpty() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks, startIndex: 2)
@@ -517,6 +553,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertTrue(sut.upcomingTracks.isEmpty)
     }
     
+    @MainActor
     func test_upcomingTracks_atFirstTrack_returnsAllExceptFirst() async {
         let tracks = makeTracks(count: 4)
         sut.loadQueue(tracks: tracks, startIndex: 0)
@@ -526,6 +563,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - trackCount Tests
     
+    @MainActor
     func test_trackCount_returnsCorrectCount() async {
         let tracks = makeTracks(count: 7)
         sut.loadQueue(tracks: tracks)
@@ -533,6 +571,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.trackCount, 7)
     }
     
+    @MainActor
     func test_trackCount_afterRemoval_returnsUpdatedCount() async {
         let tracks = makeTracks(count: 5)
         sut.loadQueue(tracks: tracks)
@@ -542,12 +581,14 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.trackCount, 4)
     }
     
+    @MainActor
     func test_trackCount_emptyQueue_returnsZero() async {
         XCTAssertEqual(sut.trackCount, 0)
     }
     
     // MARK: - remainingDuration Tests
     
+    @MainActor
     func test_remainingDuration_calculatesCorrectly() async {
         // Track durations: 60, 120, 180, 240, 300
         let tracks = makeTracks(count: 5)
@@ -557,6 +598,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.remainingDuration, 840, accuracy: 0.01)
     }
     
+    @MainActor
     func test_remainingDuration_atLastTrack_isZero() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks, startIndex: 2)
@@ -566,6 +608,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - formattedRemainingDuration Tests
     
+    @MainActor
     func test_formattedRemainingDuration_underOneHour_showsMinutes() async {
         // 3 upcoming tracks at 60s each = 180s = 3 min
         let tracks = [
@@ -580,6 +623,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.formattedRemainingDuration, "3 min")
     }
     
+    @MainActor
     func test_formattedRemainingDuration_overOneHour_showsHoursAndMinutes() async {
         // Create tracks with enough total duration to exceed 60 min
         let tracks = [
@@ -593,6 +637,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.formattedRemainingDuration, "1 hr 30 min")
     }
     
+    @MainActor
     func test_formattedRemainingDuration_noDuration_showsZeroMin() async {
         let tracks = [makeTrack(title: "T1", duration: 60)]
         sut.loadQueue(tracks: tracks, startIndex: 0)
@@ -603,6 +648,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - Repeat Mode + hasNext/hasPrevious Interaction
     
+    @MainActor
     func test_repeatAll_atEnd_hasNextIsTrue() async {
         let tracks = makeTracks(count: 3)
         sut.repeatMode = .all
@@ -611,6 +657,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertTrue(sut.hasNext, "With repeat all, last track should show hasNext")
     }
     
+    @MainActor
     func test_repeatAll_atStart_hasPreviousIsTrue() async {
         let tracks = makeTracks(count: 3)
         sut.repeatMode = .all
@@ -621,6 +668,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - moveTrack Tests
     
+    @MainActor
     func test_moveTrack_reordersQueue() async {
         let tracks = makeTracks(count: 4)
         sut.loadQueue(tracks: tracks) // [T1, T2, T3, T4], playing T1
@@ -635,6 +683,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.queue[3].title, "Track 4")
     }
     
+    @MainActor
     func test_moveTrack_updatesCurrentIndex() async {
         let tracks = makeTracks(count: 4)
         sut.loadQueue(tracks: tracks) // playing Track 1 at index 0
@@ -651,6 +700,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - ShuffleMode Enum Tests
     
+    @MainActor
     func test_shuffleMode_allCases() async {
         let allModes = ShuffleMode.allCases
         XCTAssertEqual(allModes.count, 4)
@@ -660,6 +710,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertTrue(allModes.contains(.weighted))
     }
     
+    @MainActor
     func test_shuffleMode_rawValues() async {
         XCTAssertEqual(ShuffleMode.random.rawValue, "Random")
         XCTAssertEqual(ShuffleMode.albumBased.rawValue, "Album Shuffle")
@@ -667,6 +718,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(ShuffleMode.weighted.rawValue, "Smart Shuffle")
     }
     
+    @MainActor
     func test_shuffleMode_iconNames() async {
         XCTAssertEqual(ShuffleMode.random.iconName, "shuffle")
         XCTAssertEqual(ShuffleMode.albumBased.iconName, "square.stack")
@@ -676,6 +728,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - RepeatMode Enum Tests
     
+    @MainActor
     func test_repeatMode_rawValues() async {
         XCTAssertEqual(RepeatMode.off.rawValue, "off")
         XCTAssertEqual(RepeatMode.all.rawValue, "all")
@@ -684,31 +737,37 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - Repeat Mode Icon/State Tests
     
+    @MainActor
     func test_repeatModeIcon_off_returnsRepeat() async {
         sut.repeatMode = .off
         XCTAssertEqual(sut.repeatModeIcon, "repeat")
     }
     
+    @MainActor
     func test_repeatModeIcon_all_returnsRepeat() async {
         sut.repeatMode = .all
         XCTAssertEqual(sut.repeatModeIcon, "repeat")
     }
     
+    @MainActor
     func test_repeatModeIcon_one_returnsRepeatOne() async {
         sut.repeatMode = .one
         XCTAssertEqual(sut.repeatModeIcon, "repeat.1")
     }
     
+    @MainActor
     func test_isRepeatActive_offIsFalse() async {
         sut.repeatMode = .off
         XCTAssertFalse(sut.isRepeatActive)
     }
     
+    @MainActor
     func test_isRepeatActive_allIsTrue() async {
         sut.repeatMode = .all
         XCTAssertTrue(sut.isRepeatActive)
     }
     
+    @MainActor
     func test_isRepeatActive_oneIsTrue() async {
         sut.repeatMode = .one
         XCTAssertTrue(sut.isRepeatActive)
@@ -716,6 +775,7 @@ final class QueueManagerTests: XCTestCase {
     
     // MARK: - Complex Scenario Tests
     
+    @MainActor
     func test_loadQueue_thenAdvanceThroughAll_withRepeatAll_wraps() async {
         let tracks = makeTracks(count: 3)
         sut.repeatMode = .all
@@ -729,6 +789,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.currentTrack?.title, "Track 1")
     }
     
+    @MainActor
     func test_playNextThenAdvance_playsInsertedTrack() async {
         let tracks = makeTracks(count: 3)
         sut.loadQueue(tracks: tracks) // starts at index 0
@@ -742,6 +803,7 @@ final class QueueManagerTests: XCTestCase {
         XCTAssertEqual(sut.currentTrack?.title, "Inserted Track")
     }
     
+    @MainActor
     func test_appendThenAdvanceToEnd_playsAppendedTracks() async {
         let tracks = makeTracks(count: 2)
         sut.loadQueue(tracks: tracks, startIndex: 1) // at last track

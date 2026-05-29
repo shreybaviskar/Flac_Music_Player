@@ -12,7 +12,6 @@ import Combine
 import SwiftData
 @testable import AuraPlayer
 
-@MainActor
 final class PlayerViewModelTests: XCTestCase {
     
     private var sut: PlayerViewModel!
@@ -42,6 +41,7 @@ final class PlayerViewModelTests: XCTestCase {
     
     // MARK: - Setup & Teardown
     
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         
@@ -57,6 +57,7 @@ final class PlayerViewModelTests: XCTestCase {
         sut = PlayerViewModel()
     }
     
+    @MainActor
     override func tearDown() async throws {
         playbackController.stop()
         queueManager.clearQueue()
@@ -70,6 +71,7 @@ final class PlayerViewModelTests: XCTestCase {
     
     // MARK: - Initial State
     
+    @MainActor
     func test_initialState_isCorrect() {
         XCTAssertNil(sut.currentTrack)
         XCTAssertFalse(sut.isPlaying)
@@ -93,6 +95,7 @@ final class PlayerViewModelTests: XCTestCase {
     
     // MARK: - Seeking
     
+    @MainActor
     func test_seeking_stateChanges_areCorrect() {
         sut.duration = 200
         sut.playbackProgress = 0.25
@@ -111,6 +114,7 @@ final class PlayerViewModelTests: XCTestCase {
     
     // MARK: - EQ Controls
     
+    @MainActor
     func test_applyEQPreset_updatesViewModelState() {
         let preset = EQPreset(
             name: "Vocal Boost",
@@ -128,6 +132,7 @@ final class PlayerViewModelTests: XCTestCase {
         XCTAssertTrue(sut.isEQEnabled)
     }
     
+    @MainActor
     func test_setEQBand_updatesGainValue() {
         sut.setEQBand(index: 3, gain: 4.5)
         XCTAssertEqual(sut.eqGains[3], 4.5)
@@ -136,11 +141,13 @@ final class PlayerViewModelTests: XCTestCase {
         XCTAssertEqual(sut.eqGains.count, 10)
     }
     
+    @MainActor
     func test_setPreampGain_updatesGain() {
         sut.setPreampGain(-2.5)
         XCTAssertEqual(sut.preampGain, -2.5)
     }
     
+    @MainActor
     func test_toggleEQ_togglesEnabledState() {
         XCTAssertTrue(sut.isEQEnabled)
         sut.toggleEQ()
@@ -149,6 +156,7 @@ final class PlayerViewModelTests: XCTestCase {
         XCTAssertTrue(sut.isEQEnabled)
     }
     
+    @MainActor
     func test_resetEQ_resetsAllGainsAndActivePreset() {
         let preset = EQPreset(
             name: "Bass",
@@ -168,6 +176,7 @@ final class PlayerViewModelTests: XCTestCase {
     
     // MARK: - Visualizer
     
+    @MainActor
     func test_visualizer_activation_togglesState() {
         XCTAssertFalse(sut.isVisualizerActive)
         sut.startVisualizer()
@@ -178,6 +187,7 @@ final class PlayerViewModelTests: XCTestCase {
     
     // MARK: - Queue Passthrough Actions
     
+    @MainActor
     func test_queueActions_forwardToQueueManager() {
         let track = makeTrack(title: "Track A")
         let tracks = [track, makeTrack(title: "Track B")]
@@ -197,6 +207,7 @@ final class PlayerViewModelTests: XCTestCase {
     
     // MARK: - Format Helpers
     
+    @MainActor
     func test_formattedTimes_areCorrectlyFormatted() {
         sut.duration = 245 // 4 min 5 sec
         sut.currentTime = 62 // 1 min 2 sec

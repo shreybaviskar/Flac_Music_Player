@@ -73,6 +73,12 @@ final class PlaybackController: ObservableObject {
     
     /// Connects QueueManager's play callback to this controller.
     private func setupQueueManagerBinding() {
+        onTrackFinished = {
+            Task { @MainActor in
+                QueueManager.shared.advanceToNext()
+            }
+        }
+        
         QueueManager.shared.onPlayTrack = { [weak self] track in
             Task { @MainActor in
                 self?.play(track: track)
