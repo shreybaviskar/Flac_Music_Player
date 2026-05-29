@@ -109,6 +109,19 @@ final class AudioEngineManager: ObservableObject {
     /// Called once at init and again after a media services reset.
     func setupEngine() {
         if NSClassFromString("XCTestCase") != nil {
+            tearDownEngine()
+            audioEngine = AVAudioEngine()
+            playerNode = AVAudioPlayerNode()
+            eqNode = AVAudioUnitEQ(numberOfBands: eqBandCount)
+            eqNode.globalGain = 0
+            for i in 0..<eqBandCount {
+                let band = eqNode.bands[i]
+                band.filterType = .parametric
+                band.frequency = eqFrequencies[i]
+                band.bandwidth = 1.0
+                band.gain = 0.0
+                band.bypass = false
+            }
             return
         }
         // Tear down any existing engine.
