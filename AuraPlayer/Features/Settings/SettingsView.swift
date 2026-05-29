@@ -269,8 +269,10 @@ struct SettingsView: View {
     }
 
     private func versionValue(forKey key: String) -> String? {
-        (Bundle.main.infoDictionary?[key] as? String)?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let rawValue = Bundle.main.infoDictionary?[key] as? String else {
+            return nil
+        }
+        return rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private var versionUnavailablePlaceholder: String { "—" }
