@@ -115,6 +115,7 @@ final class AudioEngineManager: ObservableObject {
             audioEngine = AVAudioEngine()
             playerNode = AVAudioPlayerNode()
             eqNode = AVAudioUnitEQ(numberOfBands: eqBandCount)
+            guard let eqNode else { return }
             eqNode.globalGain = 0
             for i in 0..<eqBandCount {
                 let band = eqNode.bands[i]
