@@ -245,10 +245,8 @@ struct SettingsView: View {
     private var shuffleToggleBinding: Binding<Bool> {
         Binding(
             get: { playerVM.isShuffleEnabled },
-            set: { newValue in
-                if newValue != playerVM.isShuffleEnabled {
-                    playerVM.toggleShuffle()
-                }
+            set: { _ in
+                playerVM.toggleShuffle()
             }
         )
     }
